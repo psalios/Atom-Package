@@ -45,8 +45,8 @@ module.exports = IssuesOnGithub =
     @commandSubscription = atom.commands.add 'atom-workspace',
       'issues-on-github:listen': =>
         console.log 'Listening'
-
-      'issues-on-github:toggle': => @view = new IssuesOnGithubView();
+      'issues-on-github:toggle': =>
+        @view = new IssuesOnGithubView()
 
     setInterval (->
       console.log 'Checking'

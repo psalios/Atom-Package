@@ -39,9 +39,7 @@ module.exports =
                 @subview 'selectEditor', new TextEditorView(mini: true)
 
         initialize: ->
-            @commandSubscription = atom.commands.add 'atom-workspace',
-              'issues-on-github:toggle': => @attach()
-
+            @attach()
             @selectEditor.on 'blur', => @close()
             atom.commands.add @element,
               'core:confirm': => @confirm()
