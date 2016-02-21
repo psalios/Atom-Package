@@ -59,11 +59,8 @@ module.exports = IssuesOnGithub =
             username =  user(isGitHubRepo())
             repository = repo(isGitHubRepo())
             check = JSON.stringify(issues[key].user.login)
-            console.log username
-            console.log check
             if( username != check.substring(1,check.length-1) )
-              if( repository.indexOf(check.substring(1,check.length-1) ) == -1 )
-                atom.notifications.addInfo( "Issue from user " + JSON.stringify(issues[key].user.login) + " at " + JSON.stringify(issues[key].html_url) )
+              atom.notifications.addInfo( "Issue from user " + JSON.stringify(issues[key].user.login) + " at " + JSON.stringify(issues[key].html_url) )
       ), 5000
 
   getSecretTokenPath: ->
