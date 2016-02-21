@@ -66,7 +66,7 @@ module.exports =
             path: '/repos/psalios/Atom-package/issues',
             method: 'POST',
             headers:
-                'Authorization': 'token 5e9e4abfa02146e130d61514c537c0fab0bd9445',
+                'Authorization': 'token ',
                 'User-Agent': "Atom"
 
           params =
