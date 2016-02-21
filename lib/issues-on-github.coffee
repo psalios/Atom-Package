@@ -6,6 +6,13 @@ module.exports = IssuesOnGithub =
   modalPanel: null
   subscriptions: null
 
+  config:
+    userToken:
+      title: 'OAuth token'
+      description: 'Enter an OAuth token to have Gists posted to your GitHub account. This token must include the gist scope.'
+      type: 'string'
+      default: ''
+
   activate: (state) ->
     @view = new IssuesOnGithubView();
     #@issuesOnGithubView = new IssuesOnGithubView(state.issuesOnGithubViewState)

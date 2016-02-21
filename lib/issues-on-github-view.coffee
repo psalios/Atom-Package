@@ -59,6 +59,18 @@ module.exports =
             @previouslyFocusedElement = $(document.activeElement)
             @close()
 
+        getSecretTokenPath: ->
+          path.join(atom.getConfigDirPath(), "issues-on-github.token")
+
+        getToken: ->
+          if not @token?
+            config = atom.config.get("issues-on-github.userToken")
+            @token = if config? and config.toString().length > 0
+                       config
+                     else if fs.existsSync(@getSecretTokenPath())
+                       fs.readFileSync(@getSecretTokenPath())
+          @token
+
         post: (callback) ->
           options =
             host: 'api.github.com',
@@ -66,7 +78,7 @@ module.exports =
             path: '/repos/psalios/Atom-package/issues',
             method: 'POST',
             headers:
-                'Authorization': 'token ',
+                'Authorization': "token #{@getToken()}",
                 'User-Agent': "Atom"
 
           params =
@@ -84,7 +96,7 @@ module.exports =
 
           request.write(JSON.stringify(params))
           request.end()
-          console.log 'Finished'
+          console.log options.headers['Authorization']
 
         close: ->
           return unless @panel.isVisible()
