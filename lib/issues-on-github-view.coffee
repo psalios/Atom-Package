@@ -54,6 +54,11 @@ module.exports =
             if isGitHubRepo()
               console.log 'Correct'
               code = atom.workspace.getActiveTextEditor().getSelectedText()
+              lang = atom.workspace.getActiveTextEditor().getLongTitle().split('.').pop()
+              langs = ["ruby", "coffee", "abap", "ags", "c" ]
+              if lang not in langs
+                lang = ""
+              code = "```" + lang + "\n" + code + "\n```"
               @post (response, body, code) =>
                 console.log response
             else
