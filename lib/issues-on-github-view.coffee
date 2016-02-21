@@ -8,8 +8,11 @@ protocol = require 'https'
 
 GH_REGEX = /^(https:\/\/|git@)github\.com(\/|:)([-\w]+)\/([-\w]+)(\.git)?$/
 
-issuesUrl = (info) ->
-  "https://api.github.com/repos/#{info.user}/#{info.repo}/issues?state=all"
+repo = (info) ->
+  info.repo
+
+user = (info) ->
+  info.user
 
 getOriginURL = -> atom.project.getRepositories()[0]?.getOriginURL() or null
 
@@ -75,7 +78,7 @@ module.exports =
           options =
             host: 'api.github.com',
             port: 443,
-            path: '/repos/psalios/Atom-package/issues',
+            path: "/repos/#{user(isGitHubRepo())}/#{repo(isGitHubRepo())}/issues",
             method: 'POST',
             headers:
                 'Authorization': "token #{@getToken()}",
@@ -96,7 +99,7 @@ module.exports =
 
           request.write(JSON.stringify(params))
           request.end()
-          console.log options.headers['Authorization']
+          console.log options.path
 
         close: ->
           return unless @panel.isVisible()
