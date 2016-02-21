@@ -16,7 +16,7 @@ user = (info) ->
 getOriginURL = -> atom.project.getRepositories()[0]?.getOriginURL() or null
 
 isGitHubRepo = ->
-  return false unless getOriginURL
+  return false unless getOriginURL()
   m = getOriginURL().match GH_REGEX
   if m
     {
@@ -53,9 +53,9 @@ module.exports =
         confirm: ->
             body = @selectEditor.getText()
             @selectEditor.setText("");
-            code = atom.workspace.getActiveTextEditor().getSelectedText()
             if isGitHubRepo()
               console.log 'Correct'
+              code = atom.workspace.getActiveTextEditor().getSelectedText()
               @post (response, body, code) =>
                 console.log response
             else

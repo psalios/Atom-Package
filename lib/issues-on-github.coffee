@@ -13,7 +13,7 @@ issuesUrl = (info) ->
 getOriginURL = -> atom.project.getRepositories()[0]?.getOriginURL() or null
 
 isGitHubRepo = ->
-  return false unless getOriginURL
+  return false unless getOriginURL()
   m = getOriginURL().match GH_REGEX
   if m
     {
@@ -59,7 +59,7 @@ module.exports = IssuesOnGithub =
             username =  user(isGitHubRepo())
             check = JSON.stringify(issues[key].user.login)
             if( username != check.substring(1,check.length-1) )
-              atom.notifications.addInfo( "Issue from user " + JSON.stringify(issues[key].user.login) + " at " + JSON.stringify(issues[key].url) )
+              atom.notifications.addInfo( "Issue from user " + JSON.stringify(issues[key].user.login) + " at " + JSON.stringify(issues[key].html_url) )
       ), 5000
 
   getSecretTokenPath: ->
