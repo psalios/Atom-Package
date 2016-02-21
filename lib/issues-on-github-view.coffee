@@ -1,5 +1,4 @@
 path = require 'path'
-_ = require 'underscore-plus'
 {$, TextEditorView, View} = require 'atom-space-pen-views'
 {BufferedProcess} = require 'atom'
 fs = require 'fs-plus'
@@ -27,6 +26,9 @@ isGitHubRepo = ->
   else
     false
 
+body = ""
+code = ""
+
 module.exports =
     class IssuesOnGithubView extends View
         previouslyFocusedElement: null
@@ -49,13 +51,12 @@ module.exports =
           @panel?.destroy()
 
         confirm: ->
-            page = @selectEditor.getText()
+            body = @selectEditor.getText()
             @selectEditor.setText("");
-            #console.log page
-            #console.log atom.workspace.getActiveTextEditor().getSelectedText()
+            code = atom.workspace.getActiveTextEditor().getSelectedText()
             if isGitHubRepo()
               console.log 'Correct'
-              @post (response) =>
+              @post (response, body, code) =>
                 console.log response
             else
               console.log 'Error'
@@ -85,8 +86,8 @@ module.exports =
                 'User-Agent': "Atom"
 
           params =
-            'title': "Found a bug",
-            'body': "I'm having a problem with this."
+            'title': body,
+            'body': code
 
           request = protocol.request options, (res) ->
             res.setEncoding "utf8"
@@ -99,7 +100,7 @@ module.exports =
 
           request.write(JSON.stringify(params))
           request.end()
-          console.log options.path
+          atom.notifications.addSuccess( "SENT" )
 
         close: ->
           return unless @panel.isVisible()

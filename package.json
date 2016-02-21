@@ -1,7 +1,7 @@
 {
   "name": "issues-on-github",
   "main": "./lib/issues-on-github",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A short description of your package",
   "keywords": [
   ],

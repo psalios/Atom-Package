@@ -1,5 +1,33 @@
 IssuesOnGithubView = require './issues-on-github-view'
 {CompositeDisposable} = require 'atom'
+path = require 'path'
+fs = require 'fs-plus'
+request = require 'request'
+protocol = require 'https'
+
+GH_REGEX = /^(https:\/\/|git@)github\.com(\/|:)([-\w]+)\/([-\w]+)(\.git)?$/
+
+issuesUrl = (info) ->
+  "https://api.github.com/repos/#{info.user}/#{info.repo}/issues?state=all"
+
+getOriginURL = -> atom.project.getRepositories()[0]?.getOriginURL() or null
+
+isGitHubRepo = ->
+  return false unless getOriginURL
+  m = getOriginURL().match GH_REGEX
+  if m
+    {
+      user: m[3]
+      repo: m[4]
+    }
+  else
+    false
+
+repo = (info) ->
+  info.repo
+
+user = (info) ->
+  info.user
 
 module.exports = IssuesOnGithub =
   issuesOnGithubView: null
@@ -14,6 +42,20 @@ module.exports = IssuesOnGithub =
       default: ''
 
   activate: (state) ->
+
+    setInterval (->
+      console.log 'Checking'
+      IssuesOnGithub.receive (err,issues) =>
+        if err
+          console.error err
+        else
+          for key of issues
+            `key = key`
+            username =  user(isGitHubRepo())
+            check = JSON.stringify(issues[key].user.login)
+            if( username != check.substring(1,check.length-1) )
+              atom.notifications.addInfo( "Issue from user " + JSON.stringify(issues[key].user.login) + " at " + JSON.stringify(issues[key].url) )
+      ), 5000
     @view = new IssuesOnGithubView();
     #@issuesOnGithubView = new IssuesOnGithubView(state.issuesOnGithubViewState)
     #@modalPanel = atom.workspace.addModalPanel(item: @issuesOnGithubView.getElement(), visible: false)
@@ -23,6 +65,39 @@ module.exports = IssuesOnGithub =
 
     # Register command that toggles this view
     #@subscriptions.add atom.commands.add 'atom-workspace', 'issues-on-github:toggle': => @toggle()
+
+  getSecretTokenPath: ->
+    path.join(atom.getConfigDirPath(), "issues-on-github.token")
+
+  getToken: ->
+    if not @token?
+      config = atom.config.get("issues-on-github.userToken")
+      @token = if config? and config.toString().length > 0
+                 config
+               else if fs.existsSync(@getSecretTokenPath())
+                 fs.readFileSync(@getSecretTokenPath())
+    @token
+
+  receive: (callback) ->
+    if( issuesUrl(isGitHubRepo) )
+      now = new Date((new Date).getTime() - 5*1000);
+      str = now.toISOString();
+      options =
+        uri: "https://api.github.com/repos/#{user(isGitHubRepo())}/#{repo(isGitHubRepo())}/issues?since=#{str}",
+        method: 'GET',
+        headers:
+            'Authorization': "token #{@getToken()}",
+            'User-Agent': "Atom"
+      request options, (err, resp, body) ->
+        if err
+          callback err
+        else
+          try
+            issues = JSON.parse body
+            callback null, issues
+          catch err
+            console.log 'ERR', body
+            callback err
 
   deactivate: ->
 

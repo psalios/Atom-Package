@@ -9,10 +9,10 @@
   {
     'label': 'Packages'
     'submenu': [
-      'label': 'issues-on-github'
+      'label': 'Github Issues'
       'submenu': [
         {
-          'label': 'Toggle'
+          'label': 'Send Issue'
           'command': 'issues-on-github:toggle'
         }
       ]
