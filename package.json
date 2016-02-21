@@ -6,7 +6,7 @@
   "keywords": [
   ],
   "activationCommands": {
-    "atom-workspace": "issues-on-github:toggle"
+    "atom-workspace": ["issues-on-github:toggle","issues-on-github:listen"]
   },
   "repository": "https://github.com/atom/issues-on-github",
   "license": "MIT",

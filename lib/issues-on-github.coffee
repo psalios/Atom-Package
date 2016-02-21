@@ -42,6 +42,11 @@ module.exports = IssuesOnGithub =
       default: ''
 
   activate: (state) ->
+    @commandSubscription = atom.commands.add 'atom-workspace',
+      'issues-on-github:listen': =>
+        console.log 'Listening'
+
+      'issues-on-github:toggle': => @view = new IssuesOnGithubView();
 
     setInterval (->
       console.log 'Checking'
@@ -56,15 +61,6 @@ module.exports = IssuesOnGithub =
             if( username != check.substring(1,check.length-1) )
               atom.notifications.addInfo( "Issue from user " + JSON.stringify(issues[key].user.login) + " at " + JSON.stringify(issues[key].url) )
       ), 5000
-    @view = new IssuesOnGithubView();
-    #@issuesOnGithubView = new IssuesOnGithubView(state.issuesOnGithubViewState)
-    #@modalPanel = atom.workspace.addModalPanel(item: @issuesOnGithubView.getElement(), visible: false)
-
-    # Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
-    #@subscriptions = new CompositeDisposable
-
-    # Register command that toggles this view
-    #@subscriptions.add atom.commands.add 'atom-workspace', 'issues-on-github:toggle': => @toggle()
 
   getSecretTokenPath: ->
     path.join(atom.getConfigDirPath(), "issues-on-github.token")

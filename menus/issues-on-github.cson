@@ -15,6 +15,10 @@
           'label': 'Send Issue'
           'command': 'issues-on-github:toggle'
         }
+        {
+          'label': 'Listen for issues'
+          'command': 'issues-on-github:listen'
+        }
       ]
     ]
   }
